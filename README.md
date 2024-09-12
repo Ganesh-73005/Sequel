@@ -235,24 +235,6 @@ ORDER BY dg1.gadget_name, dg2.gadget_name;
 
 This complex query finds pairs of gadgets that have never been used together by the same character. It uses a `CROSS JOIN` to generate all possible gadget pairs and then uses `NOT EXISTS` with a subquery to filter out pairs that have been used together.
 
-### 6. Is there a correlation between a gadget's power level and its usage?
 
-**Question:** What is the correlation coefficient between a gadget's power level and its total usage across all characters?
 
-```sql
-WITH gadget_total_usage AS (
-    SELECT gadget_id, SUM(usage_count) AS total_usage
-    FROM gadget_usage
-    GROUP BY gadget_id
-)
-SELECT 
-    (COUNT(*) * SUM(dg.power_level * gtu.total_usage) - SUM(dg.power_level) * SUM(gtu.total_usage)) /
-    (SQRT(COUNT(*) * SUM(dg.power_level * dg.power_level) - SUM(dg.power_level) * SUM(dg.power_level)) *
-     SQRT(COUNT(*) * SUM(gtu.total_usage * gtu.total_usage) - SUM(gtu.total_usage) * SUM(gtu.total_usage))) AS correlation
-FROM doraemon_gadgets dg
-JOIN gadget_total_usage gtu ON dg.gadget_id = gtu.gadget_id;
-```
 
-This advanced query calculates the correlation coefficient between a gadget's power level and its total usage across all characters. It uses a Common Table Expression (CTE) to calculate total usage and then applies the correlation formula directly in SQL.
-
-These queries demonstrate various advanced SQL techniques including subqueries, window functions, CASE statements, JOINs, EXISTS clauses, and complex mathematical calculations.
