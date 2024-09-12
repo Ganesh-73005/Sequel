@@ -218,22 +218,24 @@ This query joins three tables to find the character who used each gadget the mos
 
 ```sql
 SELECT 
-    dg1.gadget_name AS gadget1,
-    dg2.gadget_name AS gadget2
-FROM doraemon_gadgets dg1
-CROSS JOIN doraemon_gadgets dg2
-WHERE dg1.gadget_id < dg2.gadget_id
-  AND NOT EXISTS (
-    SELECT 1
+    g1.gadget_name AS gadget1,
+    g2.gadget_name AS gadget2
+FROM doraemon_gadgets g1
+JOIN doraemon_gadgets g2 ON g1.gadget_id < g2.gadget_id
+LEFT JOIN (
+    SELECT 
+        gu1.gadget_id AS gadget1_id,
+        gu2.gadget_id AS gadget2_id
     FROM gadget_usage gu1
     JOIN gadget_usage gu2 ON gu1.character_id = gu2.character_id
-    WHERE gu1.gadget_id = dg1.gadget_id
-      AND gu2.gadget_id = dg2.gadget_id
-  )
-ORDER BY dg1.gadget_name, dg2.gadget_name;
+    WHERE gu1.gadget_id < gu2.gadget_id
+) gu_pairs ON g1.gadget_id = gu_pairs.gadget1_id AND g2.gadget_id = gu_pairs.gadget2_id
+WHERE gu_pairs.gadget1_id IS NULL
+ORDER BY g1.gadget_name, g2.gadget_name;
+
 ```
 
-This complex query finds pairs of gadgets that have never been used together by the same character. It uses a `CROSS JOIN` to generate all possible gadget pairs and then uses `NOT EXISTS` with a subquery to filter out pairs that have been used together.
+
 
 
 
