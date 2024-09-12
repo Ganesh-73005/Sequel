@@ -1,4 +1,4 @@
-# Doraemon Gadgets Database - Quickstart Guide
+# Doraemon Gadgets Database 
 
 
 
